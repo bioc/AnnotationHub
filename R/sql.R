@@ -163,7 +163,7 @@
 {
     names <- paste(names, collapse=", ")
     query <- sprintf(
-        "SELECT ah_id, %s FROM resources, %s
+        "SELECT DISTINCT ah_id, %s FROM resources, %s
          WHERE resources.id IN (%s)
          AND %s.resource_id == resources.id",
         names, table, .id_as_single_string(x), table)
