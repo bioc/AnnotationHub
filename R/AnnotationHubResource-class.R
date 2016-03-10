@@ -133,9 +133,17 @@ setMethod(".get1", "dbSNPVCFFileResource",
     function(x, ...)      
 {
     .require("VariantAnnotation")
-    er <- cache(.hub(x))
-    VariantAnnotation::VcfFile(file=er[1],index=er[2])      
+    withCallingHandlers({
+        ## retrieve the resource
+        er <- cache(.hub(x))
+    }, warning=function(w) {
+        if (grepl("^Failed to parse headers:", conditionMessage(w))[1])
+            ## warning() something different, or...
+            invokeRestart("muffleWarning")
+    })
+    VariantAnnotation::VcfFile(file=er[1],index=er[2]) 
 })
+
 ## SQLiteFile
 
 setClass("SQLiteFileResource", contains="AnnotationHubResource") 
