@@ -14,6 +14,7 @@ importFrom(httr,
 )
 importFrom(interactiveDisplayBase, display)
 importFrom(BiocInstaller, biocVersion, isDevel)
+importFrom(yaml, yaml.load)
 
 importMethodsFrom(AnnotationDbi, dbconn, dbfile)
 
