@@ -94,7 +94,7 @@ setValidity("Hub",
                                         vl[[1]][length(vl[[1]])] },
                            character(1))
     dx = which(as.character(myX) %in% resource_num)
-    files = names(myX[dx])
+    files = unique(names(myX[dx]))
     hub[files]
 }
 
