@@ -1,3 +1,11 @@
+CHANGES IN VERSION 3.10.0
+-------------------------
+
+BUG CORRECTION
+
+    o (3.10.1) Fix bug in subsetting that did not account for a resource to be
+    associated with multiple files (ie. bam/bai)
+
 CHANGES IN VERSION 3.7.0
 -------------------------
 
