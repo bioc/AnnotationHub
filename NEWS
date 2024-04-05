@@ -1,4 +1,12 @@
-CHANGES IN VERSION 3.10.0
+CHANGES IN VERSION 3.11.0
+-------------------------
+
+BUG CORRECTION
+
+    o (3.11.4) Correct subsetting. Didn't account for multiple files associated
+    with single entry (ie. bam/bai).
+
+CHANGES IN VERSION 3.9.0
 -------------------------
 
 NEW FEATURES
