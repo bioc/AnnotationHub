@@ -51,10 +51,11 @@ finally selecting the SYMBOL and GENENAME corresponding to the first 6
 ENTREZIDs
 
 ```{r less-model-org-select}
-keytypes(orgdb)
-columns(orgdb)
+library(AnnotationDbi)
+AnnotationDbi::keytypes(orgdb)
+AnnotationDbi::columns(orgdb)
 egid <- head(keys(orgdb, "ENTREZID"))
-select(orgdb, egid, c("SYMBOL", "GENENAME"), "ENTREZID")
+AnnotationDbi::select(orgdb, egid, c("SYMBOL", "GENENAME"), "ENTREZID")
 ```
 
 ## Roadmap Epigenomics Project 
