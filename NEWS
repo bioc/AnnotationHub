@@ -3,6 +3,13 @@ CHANGES IN VERSION 3.11.0
 
 BUG CORRECTION
 
+    o (3.13.1) merged @votti PR for not checking connection if localhub is selected
+
+CHANGES IN VERSION 3.11.0
+-------------------------
+
+BUG CORRECTION
+
     o (3.11.4) Correct subsetting. Didn't account for multiple files associated
     with single entry (ie. bam/bai).
 
