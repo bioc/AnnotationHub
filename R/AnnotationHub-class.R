@@ -28,16 +28,7 @@ AnnotationHub <-
             cache = olddefault
         }
     }
-
-    if (is.null(proxy)){
-        connect <- suppressWarnings(tryCatch({
-            readBin(hub, n=1L, what="raw")
-            TRUE
-        }, error = function(...){
-            FALSE
-        }))
-    } else {
-        connect <- TRUE
+    if (!is.null(proxy)) {
         message("Assuming valid proxy connection through '",
                 ifelse(is(proxy,"request"),
                        paste(unlist(proxy), collapse=":"),
@@ -45,12 +36,19 @@ AnnotationHub <-
                 "'",
                 "\n If you experience connection issues consider ",
                 "using 'localHub=TRUE'")
+    } else if (!localHub) {
+        connect <- suppressWarnings(tryCatch({
+            readBin(hub, n=1L, what="raw")
+            TRUE
+        }, error = function(...){
+            FALSE
+        }))
+        if (!connect){
+            message("Cannot connect to AnnotationHub server, using 'localHub=TRUE' instead")
+            localHub <- FALSE
+        }
     }
-    if (!connect && !localHub){
-        message("Cannot connect to AnnotationHub server, using 'localHub=TRUE' instead")
-        localHub <- !connect
-    }
-    if(localHub){
+    if (localHub) {
         message("Using 'localHub=TRUE'\n",
                 "  If offline, please also see BiocManager vignette section on offline use")
     }
