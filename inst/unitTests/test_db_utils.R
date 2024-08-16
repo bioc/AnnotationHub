@@ -43,3 +43,68 @@ test_db_connections <- function(){
    checkIdentical(index1, index2)
 
 }
+
+
+test_db_corrupt_and_fix <- function(){
+
+    ## create hub to corrupt with multiple index files
+    testhub = AnnotationHub(cache=tempfile())
+    cache = hubCache(testhub)
+    bfc = BiocFileCache(cache)
+    index_name = "annotationhub.index.rds"
+    bfcnew(bfc, rname = index_name,  ext="_hub_index.rds")
+
+    error_occured <- FALSE
+    testhub2 <- withCallingHandlers({
+        AnnotationHub(cache=cache)
+    }, warning = function(cond) {
+        error_occured <<- TRUE
+        invokeRestart("muffleWarning")
+    })
+    checkTrue(error_occured)
+
+    ## check basic information on original and 'new' hub are identical
+    checkIdentical(hubCache(testhub), hubCache(testhub2))
+    checkIdentical(AnnotationHub:::.db_uid(testhub), AnnotationHub:::.db_uid(testhub2))
+    ## the index file was regenerated so it should not be the same
+    checkTrue(!identical(unname((AnnotationHub:::.db_index(testhub))),
+                         unname((AnnotationHub:::.db_index(testhub2)))))
+
+    testhub3 = AnnotationHub(cache=cache)
+    ## this should not regenerate and be the same
+    checkTrue(identical(unname((AnnotationHub:::.db_index(testhub3))),
+                        unname((AnnotationHub:::.db_index(testhub2)))))
+    checkIdentical(hubCache(testhub3), hubCache(testhub2))
+    checkIdentical(AnnotationHub:::.db_uid(testhub3), AnnotationHub:::.db_uid(testhub2))
+
+
+    ## repeat with localHub=TRUE to ensure subsetting retained
+    temp = testhub3[[1]]
+    testhub = AnnotationHub(cache=cache, localHub=TRUE)
+    ## invalidate
+    index_name = "annotationhub.index.rds"
+    bfcnew(bfc, rname = index_name,  ext="_hub_index.rds")
+
+    error_occured <- FALSE
+    testhub2 <- withCallingHandlers({
+        AnnotationHub(cache=cache, localHub=TRUE)
+    }, warning = function(cond) {
+        error_occured <<- TRUE
+        invokeRestart("muffleWarning")
+    })
+    checkTrue(error_occured)
+    ## check basic information on original and 'new' hub are identical
+    checkIdentical(hubCache(testhub), hubCache(testhub2))
+    checkIdentical(AnnotationHub:::.db_uid(testhub), AnnotationHub:::.db_uid(testhub2))
+    ## the index file was regenerated so it should not be the same
+    checkTrue(!identical(unname((AnnotationHub:::.db_index(testhub))),
+                         unname((AnnotationHub:::.db_index(testhub2)))))
+
+    testhub3 = AnnotationHub(cache=cache, localHub=TRUE)
+    ## this should not regenerate and be the same
+    checkTrue(identical(unname((AnnotationHub:::.db_index(testhub3))),
+                        unname((AnnotationHub:::.db_index(testhub2)))))
+    checkIdentical(hubCache(testhub3), hubCache(testhub2))
+    checkIdentical(AnnotationHub:::.db_uid(testhub3), AnnotationHub:::.db_uid(testhub2))  
+    
+}

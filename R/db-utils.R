@@ -62,6 +62,14 @@ setMethod("dbfile", "Hub",
     x
 }
 
+.db_clean_index <- function(x) {
+
+    bfc <- .get_cache(x)
+    index_name <- paste0(tolower(as.character(class(x))),
+                         ".index.rds")
+    bfcremove(bfc, rids=as.data.frame(bfcquery(bfc, index_name))$rid)
+}
+
 .db_create_index <- function(x) {
 
     bfc <- .get_cache(x)
@@ -72,6 +80,20 @@ setMethod("dbfile", "Hub",
     cnt <- bfccount(res)
     rid <- res %>% collect(Inf) %>% `[[`("rid")
 
+    if (cnt > 1){
+        msg <- paste0("Corrupt Cache: index file",
+                             "\n  cache: ", bfccache(bfc),
+                             "\n  multiple entries for filename: ", index_name,
+                             "\n  Attempting to clean cache and regenerate"
+                             )
+        warning(msg, call.=FALSE)
+        .db_clean_index(x)
+        res <- bfcquery(bfc, index_name,
+                    field="rname", exact=TRUE)
+        cnt <- bfccount(res)
+        rid <- res %>% collect(Inf) %>% `[[`("rid")
+    }
+    
     if (cnt > 1){
         stop("Corrupt Cache: index file",
              "\n  See AnnotationHub's TroubleshootingTheHubs vignette section on corrupt cache",
@@ -114,19 +136,7 @@ setMethod("dbfile", "Hub",
     cnt <- bfccount(res)
     rid <- res %>% collect(Inf) %>% `[[`("rid")
     if (cnt != 1){
-
-        msg <- switch(as.character(cnt),
-                      "0"=
-                      paste0("Invalid Cache: index file",
-                             "\n  Missing entry in cache for: ", index_name,
-                             "\n  Consider rerunning with 'localHub=FALSE'"),
-                      paste0("Corrupt Cache: index file",
-                             "\n  See  AnnotationHub's TroubleshootingTheHubs vignette section on corrupt cache",
-                             "\n  cache: ", bfccache(bfc),
-                             "\n  filename: ", index_name
-                             ))
-
-         stop(msg, call.=FALSE)
+        .db_create_index(x)       
     } else {
         unname(bfcpath(bfc, rids=rid))
     }
