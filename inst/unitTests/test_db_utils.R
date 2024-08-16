@@ -48,7 +48,7 @@ test_db_connections <- function(){
 test_db_corrupt_and_fix <- function(){
 
     ## create hub to corrupt with multiple index files
-    testhub = AnnotationHub(cache=tempfile())
+    testhub = AnnotationHub(cache=tempfile(), ask=FALSE)
     cache = hubCache(testhub)
     bfc = BiocFileCache(cache)
     index_name = "annotationhub.index.rds"
