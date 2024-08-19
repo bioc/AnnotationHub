@@ -8,6 +8,8 @@ BUG CORRECTION
 NEW FEATURES
 
     o (3.13.2) Add auto clean of cache if corrupt index file
+    o (3.13.3) Add auto redownload once if resource is not loading in R, if localHub
+    is not selected and internet available. 
 
 CHANGES IN VERSION 3.11.0
 -------------------------
