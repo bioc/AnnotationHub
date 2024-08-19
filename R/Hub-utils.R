@@ -308,11 +308,28 @@ possibleDates <- function(x) {
         fls <-  cache(getHub(class), force=force, verbose=verbose)
         .get1(class)
     }, error=function(err) {
-        stop("failed to load resource",
-             "\n  name: ", names(x),
-             "\n  title: ", x$title,
-             "\n  reason: ", conditionMessage(err),
-             call.=FALSE)
+
+        if (!isLocalHub(getHub(class))){
+            tryCatch({
+                message("Error loading resource.",
+                        "\n attempting to re-download")
+                fls <-  cache(getHub(class), force=TRUE, verbose=verbose)
+                .get1(class)
+            }, error = function(err){
+                stop("failed to load resource",
+                     "\n  name: ", names(x),
+                     "\n  title: ", x$title,
+                     "\n  reason: ", conditionMessage(err),
+                     call.=FALSE)
+            })
+        } else {
+            stop("failed to load resource",
+                 "\n  name: ", names(x),
+                 "\n  title: ", x$title,
+                 "\n  reason: ", conditionMessage(err),
+                 "Consider rerunning with localHub=FALSE",
+                 call.=FALSE)
+        }
     })
 }
 
