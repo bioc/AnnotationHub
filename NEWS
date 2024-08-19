@@ -5,6 +5,10 @@ BUG CORRECTION
 
     o (3.13.1) merged @votti PR for not checking connection if localhub is selected
 
+NEW FEATURES
+
+    o (3.13.2) Add auto clean of cache if corrupt index file
+
 CHANGES IN VERSION 3.11.0
 -------------------------
 
